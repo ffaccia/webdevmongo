@@ -1,2 +1,6 @@
+.package.json.swp
+readme.txt
+key.txt
 .env
 node_modules
+heroku.key

@@ -3,5 +3,6 @@ heroku.key
 readme.txt
 key.txt
 .env
-node_modules
+node_modules/
+public/uploads/
 heroku.key

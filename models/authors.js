@@ -15,7 +15,7 @@ const characterSchema = mongoose.Schema({
 })
 
 //module.exports = authorSchema.model('Author', authorSchema)
-Author = mongoose.model('Author', authorSchema)
+Author = mongoose.model('Autho', authorSchema)
 Character = mongoose.model('Character', characterSchema)
 
 module.exports = { Author, Character };

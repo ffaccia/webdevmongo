@@ -1,1 +1,11 @@
-All authors
+<ul>
+    <% books.forEach( book => { %>
+        <li>
+            <div><%= book.title %></div>  
+            <img width="100" height="150" src="<%= book.coverImagePath %>">  
+        </li>    
+    <% }) %>
+</ul>
+    
+    
+    

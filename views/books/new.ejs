@@ -1,6 +1,11 @@
 <h2>New Book</h2>
-<form action="/books" method="POST" enctype="multipart/form-data">
-    <%- include("./_form_fields") %> 
+
+<!-- multipart/form-data no nlonger needed with filepond because files are embedded in 
+     filed in base64 string 
+-->
+<!--<form action="/books" method="POST" enctype="multipart/form-data">-->
+<form action="/books" method="POST">
+        <%- include("./_form_fields") %> 
     <a href="/books">Cancel</a>
     <button id="submit_button" type="submit">Create</button>
 </form>

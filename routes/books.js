@@ -6,10 +6,15 @@ const router = express.Router()
 const { Author, Character } = require("../models/authors")
 const { Book } = require("../models/books")
 
-const multer = require("multer")
-const uploadPath = path.join("public", Book.coverImageBasePath )
+/* no longer need with filepond */
+//const multer = require("multer")
+
+/* no longer need with filepond */
+//const uploadPath = path.join("public", Book.coverImageBasePath )
+
 const imageMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif']
-const upload = multer({
+
+/* const upload = multer({
     dest: uploadPath,
     fileFilter: (req, file, callback) => {
         exts = imageMimeTypes.map(el => el.split("/")[1])
@@ -21,17 +26,18 @@ const upload = multer({
         const fileType = typeArray[1];
         const mimeArray = typeArray.join('/')
         
-        /*
-        console.log("fille ", file)
-        console.log(mimeArray)
-        console.log(exts)
-        console.log(ext)
-        console.log("ima ",imageMimeTypes.includes(mimeArray))
-        console.log("exts ", exts.includes(ext))
-        */
+        
+        //console.log("fille ", file)
+        //console.log(mimeArray)
+        //console.log(exts)
+        //console.log(ext)
+        //console.log("ima ",imageMimeTypes.includes(mimeArray))
+        //console.log("exts ", exts.includes(ext))
+        
         callback(null, imageMimeTypes.includes(mimeArray) && exts.includes(ext))
     }
 })
+ */
 
 function isEmpty(s) {
     if (s === undefined) s = ""
@@ -85,27 +91,37 @@ router.get('/new', async (req, res) => {
 
 
 /* route to create an author, becomes /authors (but POST) */
-router.post('/', upload.single('cover'), async (req, res) => {
+              /*no longer need with filepond*/
+//router.post('/', /*upload.single('cover')*/, async (req, res) => {
+
+router.post('/', async (req, res) => {
     const fileName = req.file != null ? req.file.filename : null 
     //console.error("filename vale ", req.body)
     //console.error("filename21 vale ", req.file)
 
+    console.log("start reqbody-----------------")
+    //console.log(req.body)
+    console.log("end reqbody-----------------")
+    
     const book = new Book({
         title:          req.body.title,
         author:         req.body.author,
         description:    req.body.description,
         publishDate:    new Date(req.body.publishDate),
-        pageCount:      req.body.pageCount,
-        coverImageName: fileName
+        pageCount:      req.body.pageCount
+        /* no longer needed with filepond */
+        //coverImageName: fileName
     })
-    
+    saveCover(book, req.body.cover)
+
     try {
         const newBook = await book.save()
         //res.redirect("/books/`${newBook.id}`")
         res.redirect("/books")
     } catch(e) {
         console.error(e)
-        deleteFile(fileName) 
+        //no longer needed with filepond
+        //deleteFile(fileName) 
         renderNewPage(res, book, true)
     }
 })
@@ -129,10 +145,35 @@ async function renderNewPage(res, book, hasError=false) {
     }
 }
 
+function saveCover(book, coverEncoded) {
+    if (coverEncoded == null) return
+    
+    const cover = JSON.parse(coverEncoded)
+    if (cover == null || !(imageMimeTypes.includes(cover.type))) return
+    
+    book.coverImage = new Buffer.from(cover.data, 'base64')
+    book.coverImageType = cover.type
+    
+  }
+  
+function saveCoverOld(book, coverEncoded) {
+    if (coverEncoded == null) return
+    
+    const coverObj = JSON.parse(coverEncoded)
+    if (coverObj == null || !(imageMimeTypes.includes(coverObj.type))) return
+
+    book.coverImage = new Buffer.from(coverObj.data, "base64")
+    book.coverImageType = coverObj.type
+    console.log("after save cover")
+}
+
+
+
+/* no longer needed with filepond
 function deleteFile(fileName) {
     fs.unlink(path.join(uploadPath, fileName), err => {
         if (err) console.log(`Error during unlink of ${fileName}`)
     })
 }
-
+ */
 module.exports = router
